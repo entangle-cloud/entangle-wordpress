@@ -57,7 +57,11 @@ function entangle_settings_page() {
     <script>
         window.addEventListener('DOMContentLoaded', async () => {
             const url = 'https://hicafe.co/vibecheck';
-            const uuid = "<?php echo esc_js( $script_src ); ?>"
+            const urlStr = "<?php echo esc_js( $script_src ); ?>"
+            const url = new URL(urlStr);
+            const filename = url.pathname.split('/').pop(); 
+            const uuid = filename.replace('.js', '');
+
             try {
                 if (uuid.trim().length === 0) return
                 const response = await fetch(url, {
