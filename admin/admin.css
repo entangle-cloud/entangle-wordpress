@@ -1,0 +1,95 @@
+#entangle-admin {
+  max-width: 860px;
+}
+#notification {
+  display: none;
+}
+.entangle-header {
+  margin-bottom: 24px;
+}
+.entangle-header h1 {
+  font-size: 26px;
+  margin-bottom: 4px;
+}
+.entangle-subtitle {
+  color: #666;
+  margin-top: 0;
+}
+.entangle-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+.entangle-card h2 {
+  margin-top: 0;
+  font-size: 16px;
+}
+.entangle-card-desc {
+  color: #666;
+  margin-top: -8px;
+  font-size: 13px;
+}
+.entangle-card-info {
+  background: #f0f6ff;
+  border-color: #c3d9f7;
+}
+.entangle-card-info ul {
+  margin: 0;
+  padding-left: 4px;
+  list-style: none;
+}
+.entangle-card-info li {
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+.entangle-preview {
+  margin-top: 8px;
+  padding: 10px 12px;
+  background: #f6f6f6;
+  border-left: 3px solid #2271b1;
+  border-radius: 4px;
+  font-size: 12px;
+  word-break: break-all;
+}
+.required {
+  color: #d63638;
+}
+.entangle-toggle {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 26px;
+}
+.entangle-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.entangle-toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #ccc;
+  border-radius: 26px;
+  transition: 0.3s;
+}
+.entangle-toggle-slider:before {
+  content: "";
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+.entangle-toggle input:checked + .entangle-toggle-slider {
+  background-color: #2271b1;
+}
+.entangle-toggle input:checked + .entangle-toggle-slider:before {
+  transform: translateX(22px);
+}

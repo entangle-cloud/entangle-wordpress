@@ -1,10 +1,10 @@
-=== Entangle AI Chat Bot ===
-Contributors: entangle
+=== Entangle AI Chat Bot Integration ===
+Contributors: entangle, rukshn
 Tags: ai chatbot, chatbot, customer support, ai assistant, live chat
 Requires at least: 5.9
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,6 +40,8 @@ This plugin connects to the **Entangle service** (entangle.ch) to load the chatb
 * A JavaScript module is loaded from `https://entangle.ch/script/` — this powers the chatbot interface
 * A CSS stylesheet is loaded from `https://entangle.ch/style/` — this styles the chatbot widget
 * Visitor messages are sent to Entangle's AI backend for processing
+* Entangle uses Google reCAPTCHA to protect from spam and bots, by using the Entangle plugin you agree to Googles reCAPTCHA terms of service and privacy policy. TOS `https://policies.google.com/terms`, privacy policy `https://policies.google.com/privacy`
+* At the load of the plugin a request is sent to `https://hicafe.co/vibecheck` endpoint to check the subscription status
 
 These requests are made on the **frontend of your site** whenever a visitor loads a page. No data is sent during plugin activation or from the WordPress admin.
 

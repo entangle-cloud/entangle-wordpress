@@ -1,13 +1,13 @@
 <?php
 /**
- * Plugin Name:       Entangle AI Chat Bot
+ * Plugin Name:       Entangle AI Chat Bot Integration
  * Plugin URI:        https://docs.entangle.cloud/wordpress
  * Description:       Privacy first AI powered chatbot to your website powered by Entangle, supercharge your website with user assisted AI. 
- * Version:           1.0.0
+ * Version:           1.0.2
  * Author:            Entangle
  * Author URI:        https://entangle.cloud
  * License:           GPL-2.0+
- * Text Domain:       entangle-ai
+ * Text Domain:       entangle-ai-integration
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -54,35 +54,6 @@ function entangle_settings_page() {
     $name_style_href    = esc_attr( ENTANGLE_OPTION_STYLE_HREF );
     $name_recaptcha_key = esc_attr( ENTANGLE_OPTION_RECAPTCHA_KEY );
     ?>
-    <script>
-        window.addEventListener('DOMContentLoaded', async () => {
-            const url = 'https://hicafe.co/vibecheck';
-            const uuid = "<?php echo esc_js( $script_src ); ?>"
-            try {
-                if (uuid.trim().length === 0) return
-                const response = await fetch(url, {
-                    method: "POST",
-                    headers: {
-                        'content-type': "application/json"
-                    },
-                    body: JSON.stringify({
-                        uuid: uuid,
-                    })
-                });
-                if (!response.ok) {
-                    document.getElementById("notification").style.display = "block"
-                    document.getElementById("notification").innerHTML = '<p><strong>Please request your Entangle keys by visiting: </strong><a href="https://entangle.cloud/contact" target="_blank">https://entangle.cloud/contact</a></p>'
-                }
-                
-                const data = await response.json();
-                console.log(data);
-            } catch (error) {
-                console.error('Fetch error:', error);
-                document.getElementById("notification").style.display = "block"
-                document.getElementById("notification").innerHTML = '<p><strong>Please request your Entangle keys by visiting: </strong><a href="https://entangle.cloud/contact" target="_blank">https://entangle.cloud/contact</a></p>'
-            }
-        });
-    </script>
     <div class="wrap" id="entangle-admin">
         <div class="entangle-header">
             <h1>Entangle AI Chat Bot Dashboard</h1>
@@ -215,58 +186,10 @@ function entangle_settings_page() {
             <?php submit_button('Save Settings', 'primary large' ); ?>
         </form>
     </div>
-
-    <style>
-        #entangle-admin { max-width: 860px; }
-        #notification { display: none; }
-        .entangle-header { margin-bottom: 24px; }
-        .entangle-header h1 { font-size: 26px; margin-bottom: 4px; }
-        .entangle-subtitle { color: #666; margin-top: 0; }
-        .entangle-card {
-            background: #fff;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 20px 24px;
-            margin-bottom: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,.05);
-        }
-        .entangle-card h2 { margin-top: 0; font-size: 16px; }
-        .entangle-card-desc { color: #666; margin-top: -8px; font-size: 13px; }
-        .entangle-card-info { background: #f0f6ff; border-color: #c3d9f7; }
-        .entangle-card-info ul { margin: 0; padding-left: 4px; list-style: none; }
-        .entangle-card-info li { margin-bottom: 8px; font-size: 13px; }
-        .entangle-preview {
-            margin-top: 8px;
-            padding: 10px 12px;
-            background: #f6f6f6;
-            border-left: 3px solid #2271b1;
-            border-radius: 4px;
-            font-size: 12px;
-            word-break: break-all;
-        }
-        .required { color: #d63638; }
-        .entangle-toggle { position: relative; display: inline-block; width: 48px; height: 26px; }
-        .entangle-toggle input { opacity: 0; width: 0; height: 0; }
-        .entangle-toggle-slider {
-            position: absolute; cursor: pointer; inset: 0;
-            background-color: #ccc; border-radius: 26px;
-            transition: .3s;
-        }
-        .entangle-toggle-slider:before {
-            content: ""; position: absolute;
-            height: 20px; width: 20px;
-            left: 3px; bottom: 3px;
-            background: white; border-radius: 50%;
-            transition: .3s;
-        }
-        .entangle-toggle input:checked + .entangle-toggle-slider { background-color: #2271b1; }
-        .entangle-toggle input:checked + .entangle-toggle-slider:before { transform: translateX(22px); }
-    </style>
     <?php
 }
 
 // ─── Enqueue widget stylesheet in <head> ──────────────────────────────────────
-// FIX: Use wp_enqueue_style() instead of raw echo — satisfies NonEnqueuedStylesheet rule
 add_action( 'wp_enqueue_scripts', function () {
     if ( ! get_option( ENTANGLE_OPTION_ENABLED, 1 ) ) {
         return;
@@ -294,7 +217,6 @@ function entangle_add_crossorigin_to_style( $tag, $handle ) {
 }
 
 // ─── Enqueue reCAPTCHA script in <head> ───────────────────────────────────────
-// FIX: Use wp_enqueue_script() instead of raw echo — satisfies NonEnqueuedScript rule
 add_action( 'wp_enqueue_scripts', function () {
     if ( ! get_option( ENTANGLE_OPTION_ENABLED, 1 ) ) {
         return;
@@ -348,4 +270,29 @@ add_action( 'wp_body_open', function () {
         return;
     }
     echo "\n<!-- Entangle App Root -->\n<entangle-app></entangle-app>\n";
+} );
+
+// ─── Admin Enqueue (settings page only) ──────────────────────────────────────
+add_action( 'admin_enqueue_scripts', function( $hook ) {
+    if ( $hook !== 'toplevel_page_entangle-chatbot' ) return;
+
+    wp_enqueue_script(
+        'entangle-ai-admin',
+        plugins_url( 'admin/admin.js', __FILE__ ),
+        [],
+        '1.0.0',
+        true
+    );
+
+    // Pass PHP variable to JS
+    wp_localize_script( 'entangle-ai-admin', 'entangleAdmin', [
+        'uuid' => get_option( ENTANGLE_OPTION_SCRIPT_SRC, '' ),
+    ] );
+
+    wp_enqueue_style(
+        'entangle-ai-admin-style',
+        plugins_url( 'admin/admin.css', __FILE__ ),
+        [],
+        '1.0.0'
+    );
 } );
